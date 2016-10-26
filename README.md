@@ -80,18 +80,6 @@ service
   .catch(function(err) {
     console.log(err);
   })
-  
-or
-
-service.init().then(function() {
-	//更优雅地通过.的方式调用远程方法
-	service.checkLogin(arg1, arg2)
-	  .then(function(data){
-	    console.log(data);
-	  })
-	  .catch(function(err) {
-	    console.log(err);
-	  });
 });
 
 ```
