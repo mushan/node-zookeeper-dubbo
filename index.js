@@ -142,9 +142,13 @@ Service.prototype.excute = function (method, args, cb) {
   if (_arguments.length) {
     for (var i = 0, l = _arguments.length; i < l; i++) {
       type = _arguments[i]['$class'];
-      _parameterTypes += type && ~type.indexOf('.')
-        ? 'L' + type.replace(/\./gi, '/') + ';'
-        : typeRef[type];
+      if (type.charAt(0) === '[') {
+        _parameterTypes += '[L' + type.slice(1).replace(/\./gi, '/') + ';';
+      } else {
+        _parameterTypes += type && ~type.indexOf('.')
+          ? 'L' + type.replace(/\./gi, '/') + ';'
+          : typeRef[type];
+      }
     }
     buffer = this.buffer(_method, _parameterTypes, _arguments);
   } else {
