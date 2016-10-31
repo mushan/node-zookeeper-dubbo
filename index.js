@@ -169,12 +169,12 @@ Service.prototype.excute = function (method, args, cb) {
       if (err) {
         return reject(err);
       }
-      var client = new net.Socket();
-      var bl     = 16;
-      var host   = zoo.host;
-      var port   = zoo.port;
-      var ret    = null;
-      var chunks = [];
+      var client    = new net.Socket();
+      var bl        = 16;
+      var host      = zoo.host;
+      var port      = zoo.port;
+      var ret       = null;
+      var chunks    = [];
       var heap;
       var bl_inited = false;
 
@@ -202,21 +202,17 @@ Service.prototype.excute = function (method, args, cb) {
       });
 
       client.on('data', function (chunk) {
-        chunks.push(chunk);
-        heap = Buffer.concat(chunks);
-
-        if (!bl_inited &&  heap.length >= 16) {
-
-          bl_inited = true;
-          var arr = Array.prototype.slice.call(heap.slice(0, 16));
+        if (!chunks.length) {
+          var arr = Array.prototype.slice.call(chunk.slice(0, 16));
           var i   = 0;
           while (i < 3) {
             bl += arr.pop() * Math.pow(256, i++);
           }
         }
-        if( bl_inited ){
-            (heap.length >= bl) && client.destroy();
-        }
+        chunks.push(chunk);
+        heap = Buffer.concat(chunks);
+
+        (heap.length >= bl) && client.destroy();
       });
 
       client.on('close', function (err) {
